@@ -3,27 +3,7 @@ import '../style/interview.scss'
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate, useParams } from 'react-router'
 
-const handleDownload = async () => {
-    try {
-        const data = await getResumePdf(interviewId)
 
-        const blob = new Blob([data], { type: "application/pdf" })
-        const url = window.URL.createObjectURL(blob)
-
-        const link = document.createElement("a")
-        link.href = url
-        link.download = "resume.pdf"
-
-        document.body.appendChild(link)
-        link.click()
-
-        link.remove()
-        window.URL.revokeObjectURL(url)
-
-    } catch (err) {
-        console.error("DOWNLOAD ERROR:", err)
-    }
-}
 
 const NAV_ITEMS = [
     { id: 'technical', label: 'Technical Questions', icon: (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>) },
@@ -82,6 +62,27 @@ const Interview = () => {
     const { report, getReportById, loading, getResumePdf } = useInterview()
     const { interviewId } = useParams()
 
+    const handleDownload = async () => {
+    try {
+        const data = await getResumePdf(interviewId)
+
+        const blob = new Blob([data], { type: "application/pdf" })
+        const url = window.URL.createObjectURL(blob)
+
+        const link = document.createElement("a")
+        link.href = url
+        link.download = `resume_${interviewId}.pdf`
+
+        document.body.appendChild(link)
+        link.click()
+
+        link.remove()
+        window.URL.revokeObjectURL(url)
+
+    } catch (err) {
+        console.error("DOWNLOAD ERROR:", err)
+    }
+}
     useEffect(() => {
         if (interviewId) {
             getReportById(interviewId)
